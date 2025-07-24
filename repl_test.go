@@ -1,0 +1,39 @@
+package main
+
+import "testing"
+
+func TestCleanInput(t *testing.T) {
+	cases := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input:    "  hello  world  ",
+			expected: []string{"hello", "world"},
+		},
+		{
+			input:    "Hello worlD CaSeTEst",
+			expected: []string{"hello", "world", "casetest"},
+		},
+		{
+			input:    "a very long set of words",
+			expected: []string{"a", "very", "long", "set", "of", "words"},
+		},
+	}
+	for _, c := range cases {
+		actual := cleanInput(c.input)
+
+		if len(actual) != len(c.expected) {
+			t.Errorf("Actual length %d does not match expected length %d", len(actual), len(c.expected))
+		}
+
+		for i := range actual {
+			word := actual[i]
+			expectedWord := c.expected[i]
+
+			if word != expectedWord {
+				t.Errorf("actual word %s at index %d does not match expected word %s", word, i, expectedWord)
+			}
+		}
+	}
+}
