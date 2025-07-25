@@ -40,9 +40,9 @@ func (c *Cache) reapLoop(interval time.Duration) {
 		<-ticker.C
 		c.mu.Lock()
 
-		for k, v := range c.data {
+		for key, v := range c.data {
 			if time.Since(v.createdAt) > interval {
-				delete(c.data, k)
+				delete(c.data, key)
 			}
 		}
 
