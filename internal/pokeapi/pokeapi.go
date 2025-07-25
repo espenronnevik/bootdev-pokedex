@@ -1,4 +1,4 @@
-package main
+package pokeapi
 
 import (
 	"encoding/json"
@@ -16,9 +16,9 @@ type PaginatedLocationArea struct {
 	} `json:"results"`
 }
 
-var urlLocationArea = "https://pokeapi.co/api/v2/location-area/"
+var LocationAreaUrl = "https://pokeapi.co/api/v2/location-area/"
 
-func getLocationArea(url string) (PaginatedLocationArea, error) {
+func GetLocationArea(url string) (PaginatedLocationArea, error) {
 	locarea := PaginatedLocationArea{}
 
 	res, err := http.Get(url)

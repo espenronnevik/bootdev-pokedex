@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/espenronnevik/bootdev-pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -47,12 +49,12 @@ func commandHelp(conf *config) error {
 }
 
 func commandMap(conf *config) error {
-	url := urlLocationArea
+	url := pokeapi.LocationAreaUrl
 	if conf.next != "" {
 		url = conf.next
 	}
 
-	locarea, err := getLocationArea(url)
+	locarea, err := pokeapi.GetLocationArea(url)
 	if err != nil {
 		return fmt.Errorf("Map command error: %w", err)
 	}
@@ -82,7 +84,7 @@ func commandMapb(conf *config) error {
 		return nil
 	}
 
-	locarea, err := getLocationArea(conf.previous)
+	locarea, err := pokeapi.GetLocationArea(conf.previous)
 	if err != nil {
 		return fmt.Errorf("Map command error: %w", err)
 	}
