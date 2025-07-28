@@ -39,6 +39,10 @@ func main() {
 		fmt.Println("Error registering 'catch' command.")
 	}
 
+	if err := registerReplCommand("inspect", "Inspect a pokemon in the pokedex", commandInspect); err != nil {
+		fmt.Println("Error registering 'inspect' command.")
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

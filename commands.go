@@ -152,6 +152,34 @@ func commandCatch(conf *state) error {
 	return nil
 }
 
+func commandInspect(conf *state) error {
+	if conf.arg == "" {
+		return errors.New("The name of the pokemon you want to inspect is required")
+	}
+
+	pokemon, catched := conf.pokedex[conf.arg]
+	if !catched {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %d\n", pokemon.Height)
+	fmt.Printf("Weight: %d\n", pokemon.Weight)
+
+	fmt.Println("Stats: ")
+	for i := range pokemon.Stats {
+		fmt.Printf(" -%s: %d\n", pokemon.Stats[i].Stat.Name, pokemon.Stats[i].BaseStat)
+	}
+
+	fmt.Println("Types: ")
+	for i := range pokemon.Types {
+		fmt.Printf(" - %s\n", pokemon.Types[i].Type.Name)
+	}
+
+	return nil
+}
+
 func processCommand(input []string, conf *state) error {
 	cmdname := input[0]
 
