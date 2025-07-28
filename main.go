@@ -50,7 +50,7 @@ func main() {
 		inputText := cleanInput(scanner.Text())
 		if len(inputText) > 0 {
 			if err := processCommand(inputText, &conf); err != nil {
-				fmt.Printf("Error: %s\n", err)
+				fmt.Printf("%s\n", err)
 			}
 		}
 	}

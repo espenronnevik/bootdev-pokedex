@@ -164,12 +164,11 @@ func processCommand(input []string, conf *state) error {
 
 	command, ok := replCommands[cmdname]
 	if !ok {
-		return fmt.Errorf("Unknown command: %s", cmdname)
+		return fmt.Errorf("unknown command: %s", cmdname)
 	}
 
-	err := command.callback(conf)
-	if err != nil {
-		return fmt.Errorf("Error executing command: %s\n", command.name)
+	if err := command.callback(conf); err != nil {
+		return fmt.Errorf("error executing command '%s': %w\n", cmdname, err)
 	}
 
 	return nil
