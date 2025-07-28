@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 )
 
 type PaginatedLocationArea struct {
@@ -71,28 +69,18 @@ type LocationArea struct {
 	} `json:"pokemon_encounters"`
 }
 
-var LocationAreaUrl = "https://pokeapi.co/api/v2/location-area/"
+var locationAreaUrl = "https://pokeapi.co/api/v2/location-area/"
 
 func GetLocationAreaPage(url string) (PaginatedLocationArea, error) {
-	var data []byte
+	plocarea := PaginatedLocationArea{}
 
 	if url == "" {
 		url = LocationAreaUrl + "?offset=0&limit=20"
 	}
 
-	plocarea := PaginatedLocationArea{}
-	data, cached := cache.Get(url)
-
-	if !cached {
-		res, err := http.Get(url)
-		if err != nil {
-			return plocarea, fmt.Errorf("Network error: %w", err)
-		}
-		data, err = io.ReadAll(res.Body)
-		if err != nil {
-			return plocarea, fmt.Errorf("Error reading data: %w", err)
-		}
-		cache.Add(url, data)
+	data, err := pokeGet(url)
+	if err != nil {
+		return plocarea, fmt.Errorf("GET error: %w", err)
 	}
 
 	if err := json.Unmarshal(data, &plocarea); err != nil {
@@ -103,26 +91,15 @@ func GetLocationAreaPage(url string) (PaginatedLocationArea, error) {
 }
 
 func GetLocationArea(name string) (LocationArea, error) {
-	var data []byte
-
 	locarea := LocationArea{}
+
 	if name == "" {
 		return locarea, errors.New("No id or name specified")
 	}
 
-	url := LocationAreaUrl + name
-
-	data, cached := cache.Get(url)
-	if !cached {
-		res, err := http.Get(url)
-		if err != nil {
-			return locarea, fmt.Errorf("Network error: %w", err)
-		}
-		data, err = io.ReadAll(res.Body)
-		if err != nil {
-			return locarea, fmt.Errorf("Error reading data: %w", err)
-		}
-		cache.Add(url, data)
+	data, err := pokeGet(LocationAreaUrl + name)
+	if err != nil {
+		return locarea, fmt.Errorf("GET error: %w", err)
 	}
 
 	if err := json.Unmarshal(data, &locarea); err != nil {
