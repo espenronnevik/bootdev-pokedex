@@ -28,6 +28,10 @@ func main() {
 		fmt.Println("Error registering 'mapb' command.")
 	}
 
+	if err := registerReplCommand("explore", "Explore a specified location area", commandExplore); err != nil {
+		fmt.Println("Error registering 'explore' command.")
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
