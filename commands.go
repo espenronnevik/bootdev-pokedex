@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/espenronnevik/bootdev-pokedex/internal/pokeapi"
@@ -15,6 +16,7 @@ type cliCommand struct {
 }
 
 type state struct {
+	pokedex  map[string]pokeapi.Pokemon
 	code     int
 	arg      string
 	nextpage string
@@ -124,6 +126,29 @@ func commandExplore(conf *state) error {
 	for i := range locarea.PokemonEncounters {
 		fmt.Printf(" - %s\n", locarea.PokemonEncounters[i].Pokemon.Name)
 	}
+	return nil
+}
+
+func commandCatch(conf *state) error {
+	if conf.arg == "" {
+		return errors.New("The name of the pokemon you want to catch is required")
+	}
+
+	pokemon, err := pokeapi.GetPokemon(conf.arg)
+	if err != nil {
+		return fmt.Errorf("Catch command error: %w", err)
+	}
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	skill := rand.Intn(700)
+
+	if skill > pokemon.BaseExperience {
+		fmt.Printf("%s was caught!\n", pokemon.Name)
+		conf.pokedex[pokemon.Name] = pokemon
+	} else {
+		fmt.Printf("%s escaped!\n", pokemon.Name)
+	}
+
 	return nil
 }
 

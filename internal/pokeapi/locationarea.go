@@ -75,7 +75,7 @@ func GetLocationAreaPage(url string) (PaginatedLocationArea, error) {
 	plocarea := PaginatedLocationArea{}
 
 	if url == "" {
-		url = LocationAreaUrl + "?offset=0&limit=20"
+		url = locationAreaUrl + "?offset=0&limit=20"
 	}
 
 	data, err := pokeGet(url)
@@ -97,7 +97,7 @@ func GetLocationArea(name string) (LocationArea, error) {
 		return locarea, errors.New("No id or name specified")
 	}
 
-	data, err := pokeGet(LocationAreaUrl + name)
+	data, err := pokeGet(locationAreaUrl + name)
 	if err != nil {
 		return locarea, fmt.Errorf("GET error: %w", err)
 	}
