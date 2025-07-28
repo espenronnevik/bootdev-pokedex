@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -108,11 +109,31 @@ func commandMapb(conf *state) error {
 	return nil
 }
 
+func commandExplore(conf *state) error {
+	if conf.arg == "" {
+		return errors.New("A location name to explore is required")
+	}
+
+	locarea, err := pokeapi.GetLocationArea(conf.arg)
+	if err != nil {
+		return fmt.Errorf("Explore command error: %w", err)
+	}
+
+	for i := range locarea.PokemonEncounters {
+		fmt.Println(locarea.PokemonEncounters[i].Pokemon.Name)
+	}
+	return nil
+}
+
 func processCommand(input []string, conf *state) error {
-	name := input[0]
-	command, ok := replCommands[name]
+	cmdname := input[0]
+	if len(input) > 1 {
+		conf.arg = input[1]
+	}
+
+	command, ok := replCommands[cmdname]
 	if !ok {
-		return fmt.Errorf("Unknown command: %s", name)
+		return fmt.Errorf("Unknown command: %s", cmdname)
 	}
 
 	err := command.callback(conf)
