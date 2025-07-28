@@ -51,7 +51,7 @@ func main() {
 	}
 
 	// EOF on stdin, exit gracefully
-	cmdstate.arg = "Goodbye!"
+	cmdstate.arg = "EOF reached. Goodbye!"
 	commandExit(&cmdstate)
 }
 

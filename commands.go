@@ -37,6 +37,9 @@ func registerReplCommand(name, desc string, cb func(*state) error) error {
 }
 
 func commandExit(conf *state) error {
+	if conf.arg == "" {
+		conf.arg = "Goodbye!"
+	}
 	fmt.Printf("Closing the Pokedex... %s\n", conf.arg)
 	os.Exit(conf.code)
 	return nil
