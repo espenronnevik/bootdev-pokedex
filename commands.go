@@ -145,6 +145,7 @@ func commandCatch(conf *state) error {
 	if skill > pokemon.BaseExperience {
 		fmt.Printf("%s was caught!\n", pokemon.Name)
 		conf.pokedex[pokemon.Name] = pokemon
+		fmt.Println("You may now inspect it with the inspect command.")
 	} else {
 		fmt.Printf("%s escaped!\n", pokemon.Name)
 	}
@@ -177,6 +178,14 @@ func commandInspect(conf *state) error {
 		fmt.Printf(" - %s\n", pokemon.Types[i].Type.Name)
 	}
 
+	return nil
+}
+
+func commandPokedex(conf *state) error {
+	fmt.Println("Your pokedex:")
+	for _, v := range conf.pokedex {
+		fmt.Printf(" - %s\n", v.Name)
+	}
 	return nil
 }
 
