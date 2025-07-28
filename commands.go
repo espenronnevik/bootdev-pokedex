@@ -51,13 +51,7 @@ func commandHelp(conf *state) error {
 }
 
 func commandMap(conf *state) error {
-	url := pokeapi.LocationAreaUrl
-
-	if conf.nextpage != "" {
-		url = conf.nextpage
-	}
-
-	locarea, err := pokeapi.GetLocationArea(url)
+	locarea, err := pokeapi.GetLocationAreaPage(conf.nextpage)
 	if err != nil {
 		return fmt.Errorf("Map command error: %w", err)
 	}
@@ -87,7 +81,7 @@ func commandMapb(conf *state) error {
 		return nil
 	}
 
-	locarea, err := pokeapi.GetLocationArea(conf.prevpage)
+	locarea, err := pokeapi.GetLocationAreaPage(conf.prevpage)
 	if err != nil {
 		return fmt.Errorf("Map command error: %w", err)
 	}

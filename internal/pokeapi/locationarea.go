@@ -17,10 +17,14 @@ type PaginatedLocationArea struct {
 	} `json:"results"`
 }
 
-var LocationAreaUrl = "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20"
+var LocationAreaUrl = "https://pokeapi.co/api/v2/location-area/"
 
-func GetLocationArea(url string) (PaginatedLocationArea, error) {
+func GetLocationAreaPage(url string) (PaginatedLocationArea, error) {
 	var data []byte
+
+	if url == "" {
+		url = LocationAreaUrl + "?offset=0&limit=20"
+	}
 
 	locarea := PaginatedLocationArea{}
 	data, cached := cache.Get(url)
