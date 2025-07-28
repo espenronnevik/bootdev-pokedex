@@ -127,6 +127,10 @@ func commandExplore(conf *state) error {
 
 func processCommand(input []string, conf *state) error {
 	cmdname := input[0]
+
+	// Clear arguments in state after processing completes
+	defer func() { conf.arg = "" }()
+
 	if len(input) > 1 {
 		conf.arg = input[1]
 	}
