@@ -114,13 +114,15 @@ func commandExplore(conf *state) error {
 		return errors.New("A location name to explore is required")
 	}
 
+	fmt.Printf("Exploring %s...\n", conf.arg)
 	locarea, err := pokeapi.GetLocationArea(conf.arg)
 	if err != nil {
 		return fmt.Errorf("Explore command error: %w", err)
 	}
 
+	fmt.Println("Found pokemon: ")
 	for i := range locarea.PokemonEncounters {
-		fmt.Println(locarea.PokemonEncounters[i].Pokemon.Name)
+		fmt.Printf(" - %s\n", locarea.PokemonEncounters[i].Pokemon.Name)
 	}
 	return nil
 }
