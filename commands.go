@@ -10,17 +10,19 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*state) error
 }
 
-type config struct {
-	next     string
-	previous string
+type state struct {
+	code     int
+	arg      string
+	nextpage string
+	prevpage string
 }
 
 var replCommands map[string]cliCommand
 
-func registerReplCommand(name, desc string, cb func(*config) error) error {
+func registerReplCommand(name, desc string, cb func(*state) error) error {
 	_, exists := replCommands[name]
 	if exists {
 		return fmt.Errorf("Command already exists")
@@ -34,13 +36,13 @@ func registerReplCommand(name, desc string, cb func(*config) error) error {
 	return nil
 }
 
-func commandExit(conf *config) error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
+func commandExit(conf *state) error {
+	fmt.Printf("Closing the Pokedex... %s\n", conf.arg)
+	os.Exit(conf.code)
 	return nil
 }
 
-func commandHelp(conf *config) error {
+func commandHelp(conf *state) error {
 	fmt.Print("Welcome to the Pokedex!\nUsage:\n\n")
 	for _, v := range replCommands {
 		fmt.Printf("%s: %s\n", v.name, v.description)
@@ -48,10 +50,11 @@ func commandHelp(conf *config) error {
 	return nil
 }
 
-func commandMap(conf *config) error {
+func commandMap(conf *state) error {
 	url := pokeapi.LocationAreaUrl
-	if conf.next != "" {
-		url = conf.next
+
+	if conf.nextpage != "" {
+		url = conf.nextpage
 	}
 
 	locarea, err := pokeapi.GetLocationArea(url)
@@ -60,15 +63,15 @@ func commandMap(conf *config) error {
 	}
 
 	if locarea.Next != nil {
-		conf.next = *locarea.Next
+		conf.nextpage = *locarea.Next
 	} else {
-		conf.next = ""
+		conf.nextpage = ""
 	}
 
 	if locarea.Previous != nil {
-		conf.previous = *locarea.Previous
+		conf.prevpage = *locarea.Previous
 	} else {
-		conf.previous = ""
+		conf.prevpage = ""
 	}
 
 	for _, v := range locarea.Results {
@@ -78,27 +81,27 @@ func commandMap(conf *config) error {
 	return nil
 }
 
-func commandMapb(conf *config) error {
-	if conf.previous == "" {
+func commandMapb(conf *state) error {
+	if conf.prevpage == "" {
 		fmt.Println("You're on the first page")
 		return nil
 	}
 
-	locarea, err := pokeapi.GetLocationArea(conf.previous)
+	locarea, err := pokeapi.GetLocationArea(conf.prevpage)
 	if err != nil {
 		return fmt.Errorf("Map command error: %w", err)
 	}
 
 	if locarea.Next != nil {
-		conf.next = *locarea.Next
+		conf.nextpage = *locarea.Next
 	} else {
-		conf.next = ""
+		conf.nextpage = ""
 	}
 
 	if locarea.Previous != nil {
-		conf.previous = *locarea.Previous
+		conf.prevpage = *locarea.Previous
 	} else {
-		conf.previous = ""
+		conf.prevpage = ""
 	}
 
 	for _, v := range locarea.Results {
@@ -108,7 +111,7 @@ func commandMapb(conf *config) error {
 	return nil
 }
 
-func processCommand(input []string, conf *config) error {
+func processCommand(input []string, conf *state) error {
 	name := input[0]
 	command, ok := replCommands[name]
 	if !ok {
@@ -119,5 +122,6 @@ func processCommand(input []string, conf *config) error {
 	if err != nil {
 		return fmt.Errorf("Error executing command: %s\n", command.name)
 	}
+
 	return nil
 }

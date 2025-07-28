@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	conf := config{}
+	cmdstate := state{}
+
 	replCommands = make(map[string]cliCommand)
 
 	if err := registerReplCommand("exit", "Exit  the Pokedex", commandExit); err != nil {
@@ -31,24 +32,27 @@ func main() {
 	for {
 		fmt.Print("Pokedex > ")
 		if ok := scanner.Scan(); !ok {
-			// Scanner reported problems, break out of the loop
+			// Scanner couldn't scan, bail from the loop
 			break
 		}
 
 		inputText := cleanInput(scanner.Text())
 		if len(inputText) > 0 {
-			if err := processCommand(inputText, &conf); err != nil {
+			if err := processCommand(inputText, &cmdstate); err != nil {
 				fmt.Printf("Error: %s\n", err)
 			}
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Printf("Error occured during input scanning: %s\n", err)
-		os.Exit(1)
+		// Something went wrong, report error and exit with errorcode
+		cmdstate.code = 1
+		cmdstate.arg = fmt.Sprintf("error occured during input scanning: %s\n", err)
 	}
-	// EOF on stdin, call exit command
-	commandExit(nil)
+
+	// EOF on stdin, exit gracefully
+	cmdstate.arg = "Goodbye!"
+	commandExit(&cmdstate)
 }
 
 // Split string into words, make lowercase and trim whitespace
